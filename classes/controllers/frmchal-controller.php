@@ -55,6 +55,7 @@ class FrmChal_Controller {
 
 		$this->load_dependencies();
 		$this->define_admin_hooks();
+		$this->define_public_hooks();
 	}
 
 	/**
@@ -96,6 +97,10 @@ class FrmChal_Controller {
 		 */
 		require_once FrmChal_App_Helper::plugin_path() . '/classes/controllers/frmchal-admin-controller.php';
 
+		/**
+		 * The class responsible for defining all actions that occur in the Public Side.
+		 */
+		require_once FrmChal_App_Helper::plugin_path() . '/classes/controllers/frmchal-public-controller.php';
 
 		$this->loader = new FrmChal_Loader_Controller();
 
@@ -112,27 +117,32 @@ class FrmChal_Controller {
 	private function define_admin_hooks() {
 
 		$plugin_admin         = new FrmChal_Admin_Controller();
-		self::$admin_instance = $plugin_admin;
+		$plugin_list          = new FrmChal_List_Helper();
 
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
 		$this->loader->add_filter( 'admin_body_class', $plugin_admin, 'add_admin_class', 999 );
+		$this->loader->add_action( 'wp_ajax_get_table', $plugin_list, 'get_table' );
 	}
 
-
 	/**
-	 * Get admin instance.
+	 * Register all of the hooks related to the public side functionality
+	 * of the plugin.
 	 *
 	 * @since 1.0.0
-	 * @return object|FrmChal_Admin_Controller
+	 * @access private
+	 * @return void
 	 */
-	public function get_admin_instance() {
+	private function define_public_hooks() {
 
-		if ( is_null( self::$admin_instance ) ) {
-			self::$admin_instance = new FrmChal_Admin_Controller();
-		}
-		return self::$admin_instance;
-
+		$plugin_public        = new FrmChal_Public_Controller();
+		$plugin_list          = new FrmChal_List_Helper();
+		
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
+		$this->loader->add_action( 'wp_ajax_get_table', $plugin_list, 'get_table' );
+		add_shortcode('formidable_challenge', [$plugin_list, 'get_table_shortcode']);
 	}
 
 	/**
@@ -144,17 +154,4 @@ class FrmChal_Controller {
 	public function run() {
 		$this->loader->run();
 	}
-
-	/**
-	 * The reference to the class that orchestrates the hooks with the plugin.
-	 *
-	 * @since 1.0.0
-	 * @return FrmChal_Loader_Controller Orchestrates the hooks of the plugin.
-	 */
-	public function get_loader() {
-
-		return $this->loader;
-
-	}
-
 }

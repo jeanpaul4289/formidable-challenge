@@ -75,30 +75,11 @@ class FrmChal_App_Helper {
 	}
 
 	public static function plugin_url() {
-		// Prevously FRM_URL constant.
 		return plugins_url( '', self::plugin_path() . '/formidable.php' );
 	}
 
-	public static function relative_plugin_url() {
-		return str_replace( array( 'https:', 'http:' ), '', self::plugin_url() );
-	}
-
-	/**
-	 * @return string Site URL
-	 */
-	public static function site_url() {
-		return site_url();
-	}
-
-	/**
-	 * Get the name of this site
-	 * Used for [sitename] shortcode
-	 *
-	 * @since 2.0
-	 * @return string
-	 */
-	public static function site_name() {
-		return get_option( 'blogname' );
+	public static function current_date() {
+		return date('Y-m-d H:i:s');
 	}
 
 }

@@ -39,7 +39,13 @@ class FrmChal_List_Helper {
 	 * @access public
 	 */
 	public function prepare_items() {
-		$this->items = json_decode($this->remote_response_handler( FrmChal_App_Helper::$api_url ));
+		$frmchal_data = get_option('frmchal_data');
+		if($this->more_than_one_hour() || !$frmchal_data){
+			$frmchal_data = $this->remote_response_handler( FrmChal_App_Helper::$api_url );
+			update_option('frmchal_data', $frmchal_data);
+			update_option('frmchal_date', FrmChal_App_Helper::current_date());
+		} 
+		$this->items = json_decode($frmchal_data);
 		$this->items_qty = $this->items ? count((array)$this->items->data->rows) : 0;
 	}
 
@@ -61,6 +67,20 @@ class FrmChal_List_Helper {
 		return $body;
 
 	}
+
+	/**
+	 * Returns whether the data has been requested in more than one hour or not.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function more_than_one_hour() {
+		$frmchal_date    = get_option('frmchal_date') ? get_option('frmchal_date') : FrmChal_App_Helper::current_date();
+		$last_date       = strtotime($frmchal_date);
+		$current_date    = strtotime(FrmChal_App_Helper::current_date());
+		$time_difference = abs($current_date - $last_date)/(60*60);
+		return $time_difference > 1;
+	} 
 
 	/**
 	 * Display rows
@@ -95,7 +115,7 @@ class FrmChal_List_Helper {
 	 * @access public
 	 */
 	public function no_items() {
-		esc_html_e( 'No items found.', 'formidable' );
+		esc_html_e( 'No users found.', 'formidable' );
 	}
 
 	/**
@@ -108,18 +128,6 @@ class FrmChal_List_Helper {
 	 */
 	public function get_column_headers() {
 		return $this->items ? $this->items->data->headers : [];
-	}
-
-	/**
-	 * Return number of items
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return int
-	 */
-	public function get_items_count() {
-		echo $this->items_qty;
 	}
 
 	/**
@@ -150,7 +158,7 @@ class FrmChal_List_Helper {
 
 				$column_display_name = esc_html( $column_display_name );
 
-				echo "<th $class>$column_display_name</th>"; // WPCS: XSS ok.
+				echo "<th>$column_display_name</th>"; // WPCS: XSS ok.
 			}
 		}
 	}
@@ -198,7 +206,7 @@ class FrmChal_List_Helper {
 		?>
 		<div class="tablenav <?php echo esc_attr( $which ); ?>">
 			<div class="tablenav-pages one-page">
-				<span class="displaying-num"><?php echo $this->items_qty; ?> items</span>
+				<span class="displaying-num"><?php echo $this->items_qty; ?> users</span>
 			</div>
 			<?php if ($which == 'top') { ?>
 			<div class="view-switch">
@@ -259,13 +267,73 @@ class FrmChal_List_Helper {
 	}
 
 	/**
+	 * Generate the top bar element for the list table.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
+	public function display_top_bar() {
+		?>
+		<div id="frm_top_bar">
+			<div id="frm-publishing"></div>
+			<a href="#" class="frm-header-logo">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 599.68 601.37" width="35" height="35">
+					<path fill="#f05a24" d="M289.6 384h140v76h-140z"></path>
+					<path fill="#4d4d4d" d="M400.2 147h-200c-17 0-30.6 12.2-30.6 29.3V218h260v-71zM397.9 264H169.6v196h75V340H398a32.2 32.2 0 0 0 30.1-21.4 24.3 24.3 0 0 0 1.7-8.7V264zM299.8 601.4A300.3 300.3 0 0 1 0 300.7a299.8 299.8 0 1 1 511.9 212.6 297.4 297.4 0 0 1-212 88zm0-563A262 262 0 0 0 38.3 300.7a261.6 261.6 0 1 0 446.5-185.5 259.5 259.5 0 0 0-185-76.8z"></path>
+				</svg>
+			</a>
+			<div class="frm_top_left frm_top_wide">
+				<h1>
+					Formidable Challenge						
+					<a id="refresh" ref="#" class="button button-primary frm-button-primary">Refresh</a>
+				</h1>
+			</div>
+			<div style="clear:right;"></div>
+		</div>
+		<?php
+	}
+
+	public function display_sub_bar() {
+		?>
+		<ul class="subsubsub">
+            <li class="published">
+                <a href="#" class="current">Users <span class="count">(<?php echo $this->items_qty; ?>)</span></a><br/>
+            </li>
+		</ul>
+		<?php
+	}
+
+	/**
 	 * Handling ajax requests
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function ajax_response() {
-		// TODO
+	public function get_table() {
+		$this->prepare_items();
+		ob_start();
+		
+		$this->display();
+
+		$table = ob_get_clean();
+
+		$response = array( 
+			'table' => $table,
+			'items_qty' => $this->items_qty,
+			'current_date' => get_option('frmchal_date')
+		);
+		die( wp_json_encode( $response ) );
+	}
+
+	public function get_table_shortcode() {
+		wp_enqueue_style('frmchal_style');
+		wp_enqueue_script('frmchal_script');
+		
+		ob_start();
+		$frmchal_list = new FrmChal_List_Helper();
+
+		require(FrmChal_App_Helper::plugin_path() . '/classes/views/frmchal-page-settings.php');
+		return ob_get_clean();
 	}
 
 }
