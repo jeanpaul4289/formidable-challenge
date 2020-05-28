@@ -9,6 +9,9 @@
  * @subpackage Formidable_Challenge/controllers
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'You are not allowed to call this page directly.' );
+}
 /**
  * Register all actions and filters for the plugin.
  *
@@ -187,7 +190,7 @@ class FrmChal_Loader_Controller {
 	 * @return void
 	 */
 	public function run() {
-		
+
 		foreach ( $this->filters as $hook ) {
 			add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
 		}

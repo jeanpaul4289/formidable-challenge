@@ -34,13 +34,12 @@ if ( ! defined( 'FORMIDABLE_CHALLENGE_FILE' ) ) {
 }
 
 /**
- *
  * The core plugin class that is used to define admin-facing site hooks.
  *
  * @since 1.0.0
- */	
+ */
 function frmchal_class_autoloader() {
-	require_once plugin_dir_path(__FILE__) . 'classes/controllers/frmchal-controller.php';
+	require_once plugin_dir_path( __FILE__ ) . 'classes/controllers/class-frmchal-controller.php';
 }
 
 /**
@@ -52,10 +51,10 @@ function frmchal_class_autoloader() {
  *
  * @since 1.0.0
  */
-add_action( 'plugins_loaded', 'run_formidable_challenge', 0 );
 function run_formidable_challenge() {
 	$plugin = new FrmChal_Controller();
 	$plugin->run();
 }
+add_action( 'plugins_loaded', 'run_formidable_challenge', 0 );
 
 frmchal_class_autoloader();

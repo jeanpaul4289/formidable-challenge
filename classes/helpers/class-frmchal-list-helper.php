@@ -1,9 +1,26 @@
 <?php
+/**
+ * The helper class for table related functions used in the plugin.
+ *
+ * @link https://github.com/jeanpaul4289
+ * @since 1.0.0
+ *
+ * @package Formidable_Challenge
+ * @subpackage Formidable_Challenge/helpers
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die( 'You are not allowed to call this page directly.' );
 }
-
-// TODO - add comments
+/**
+ * The helper class for table related functions used in the plugin.
+ *
+ * Provides the plugin name, version, url, path and current date.
+ *
+ * @package Formidable_Challenge
+ * @subpackage Formidable_Challenge/helpers
+ * @author Jean Paul Demorizi <jeanpaul4289@gmail.com>
+ */
 class FrmChal_List_Helper {
 	/**
 	 * The current list of items
@@ -39,27 +56,27 @@ class FrmChal_List_Helper {
 	 * @access public
 	 */
 	public function prepare_items() {
-		$frmchal_data = get_option('frmchal_data');
-		if($this->more_than_one_hour() || !$frmchal_data){
-			$frmchal_data = $this->remote_response_handler( FrmChal_App_Helper::$api_url );
-			update_option('frmchal_data', $frmchal_data);
-			update_option('frmchal_date', FrmChal_App_Helper::current_date());
-		} 
-		$this->items = json_decode($frmchal_data);
-		$this->items_qty = $this->items ? count((array)$this->items->data->rows) : 0;
+		$frmchal_data = get_option( 'frmchal_data' );
+		if ( $this->more_than_one_hour() || ! $frmchal_data ) {
+			$frmchal_data = $this->remote_response_handler( FrmChal_App_Helper::api_url() );
+			update_option( 'frmchal_data', $frmchal_data );
+			update_option( 'frmchal_date', FrmChal_App_Helper::current_date() );
+		}
+		$this->items     = json_decode( $frmchal_data );
+		$this->items_qty = $this->items ? count( (array) $this->items->data->rows ) : 0;
 	}
 
 	/**
 	 * Returns whether the data has been requested in more than one hour or not.
 	 *
 	 * @since 1.0.0
-	 * @return void
+	 * @return boolean
 	 */
 	public function more_than_one_hour() {
-		$frmchal_date    = get_option('frmchal_date') ? get_option('frmchal_date') : FrmChal_App_Helper::current_date();
-		$last_date       = strtotime($frmchal_date);
-		$current_date    = strtotime(FrmChal_App_Helper::current_date());
-		$time_difference = abs($current_date - $last_date)/(60*60);
+		$frmchal_date    = get_option( 'frmchal_date' ) ? get_option( 'frmchal_date' ) : FrmChal_App_Helper::current_date();
+		$last_date       = strtotime( $frmchal_date );
+		$current_date    = strtotime( FrmChal_App_Helper::current_date() );
+		$time_difference = abs( $current_date - $last_date ) / ( 60 * 60 );
 		return $time_difference > 1;
 	}
 
@@ -70,9 +87,9 @@ class FrmChal_List_Helper {
 	 * @return void
 	 */
 	public function refresh() {
-		delete_option('frmchal_data');
-		delete_option('frmchal_date');
-	} 
+		delete_option( 'frmchal_data' );
+		delete_option( 'frmchal_date' );
+	}
 
 	/**
 	 * Remote response handler for the API endpoint
@@ -100,9 +117,9 @@ class FrmChal_List_Helper {
 	 * @return void
 	 */
 	public function display_rows() {
-		if($this->items && $this->items->data){
+		if ( $this->items && $this->items->data ) {
 			foreach ( $this->items->data->rows as $item ) {
-				echo $this->single_row( $item );
+				echo esc_html( $this->single_row( $item ) );
 			}
 		}
 	}
@@ -150,7 +167,7 @@ class FrmChal_List_Helper {
 	 * @return int
 	 */
 	public function get_column_count() {
-		$columns  = $this->get_column_headers();
+		$columns = $this->get_column_headers();
 		return count( $columns );
 	}
 
@@ -159,11 +176,10 @@ class FrmChal_List_Helper {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 *
 	 */
 	public function print_column_headers() {
 		$columns = $this->get_column_headers();
-		if($columns) {
+		if ( $columns ) {
 			foreach ( $columns as $column_key => $column_display_name ) {
 				$class = array( 'manage-column', "column-$column_key" );
 
@@ -210,16 +226,15 @@ class FrmChal_List_Helper {
 	 *
 	 * @since 1.0.0
 	 * @access protected
-	 *
-	 * @param string $which
+	 * @param string $which Whether is the top table navigation or the bottom table navigation.
 	 */
 	protected function display_tablenav( $which ) {
 		?>
 		<div class="tablenav <?php echo esc_attr( $which ); ?>">
 			<div class="tablenav-pages one-page">
-				<span class="displaying-num"><?php echo $this->items_qty; ?> users</span>
+				<span class="displaying-num"><?php echo wp_unslash( $this->items_qty ); ?> users</span>
 			</div>
-			<?php if ($which == 'top') { ?>
+			<?php if ( 'top' === $which ) { ?>
 			<div class="view-switch">
 				<a href="#" class="view-list current" id="view-switch-list"><span class="screen-reader-text">List View</span></a>
 			</div>
@@ -252,7 +267,7 @@ class FrmChal_List_Helper {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param object $item The current item
+	 * @param object $item The current item.
 	 */
 	public function single_row( $item ) {
 		echo '<tr>';
@@ -266,14 +281,14 @@ class FrmChal_List_Helper {
 	 * @since 1.0.0
 	 * @access protected
 	 *
-	 * @param object $item The current item
+	 * @param object $item The current item.
 	 */
 	protected function single_row_columns( $item ) {
 		$columns = $this->get_column_headers();
-		foreach($item as $key => $value ) {
+		foreach ( $item as $key => $value ) {
 			echo "<td $attributes>"; // WPCS: XSS ok.
-			echo $value;
-			echo "</td>";
+			echo esc_html( $value );
+			echo '</td>';
 		}
 	}
 
@@ -304,50 +319,62 @@ class FrmChal_List_Helper {
 		<?php
 	}
 
+	/**
+	 * Generate the sub bar element for the list table.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	public function display_sub_bar() {
 		?>
 		<ul class="subsubsub">
-            <li class="published">
-                <a href="#" class="current">Users <span class="count">(<?php echo $this->items_qty; ?>)</span></a><br/>
-            </li>
+			<li class="published">
+				<a href="#" class="current">Users <span class="count">(<?php echo wp_unslash( $this->items_qty ); ?>)</span></a><br/>
+			</li>
 		</ul>
 		<?php
 	}
 
 	/**
-	 * Handling ajax requests
+	 * Handling ajax requests to get the table data
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 */
 	public function get_table() {
-		$refresh = $_POST['refresh'] == "true" ? true : false;
-		if ($refresh) {
+		$refresh = isset( $_POST['refresh'] ) && 'true' === $_POST['refresh'] ? true : false; // input var okay.
+		if ( $refresh ) {
 			$this->refresh();
 		}
-		$this->prepare_items($refresh);
+		$this->prepare_items( $refresh );
 		ob_start();
-		
+
 		$this->display();
 
 		$table = ob_get_clean();
 
-		$response = array( 
-			'table' => $table,
-			'items_qty' => $this->items_qty,
-			'current_date' => get_option('frmchal_date')
+		$response = array(
+			'table'        => $table,
+			'items_qty'    => $this->items_qty,
+			'current_date' => get_option( 'frmchal_date' ),
 		);
 		die( wp_json_encode( $response ) );
 	}
 
+	/**
+	 * Displays the table if the content of the page has the shortcode [formidable-challenge]
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
 	public function get_table_shortcode() {
-		wp_enqueue_style('frmchal_style');
-		wp_enqueue_script('frmchal_script');
-		
+		wp_enqueue_style( 'frmchal_style' );
+		wp_enqueue_script( 'frmchal_script' );
+
 		ob_start();
 		$frmchal_list = new FrmChal_List_Helper();
 
-		require(FrmChal_App_Helper::plugin_path() . '/classes/views/frmchal-page-settings.php');
+		require FrmChal_App_Helper::plugin_path() . '/classes/views/frmchal-page-settings.php';
 		return ob_get_clean();
 	}
 

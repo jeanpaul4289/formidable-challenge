@@ -9,6 +9,9 @@
  * @subpackage Formidable_Challenge/controllers
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'You are not allowed to call this page directly.' );
+}
 /**
  * The admin-panel-specific functionality of the plugin.
  *
@@ -44,7 +47,8 @@ class FrmChal_Admin_Controller {
 	 * Adds custom classes to the admin page body
 	 *
 	 * @since 1.0.0
-	 * @return void
+	 * @param string $classes Current css classes the admin body is using.
+	 * @return string
 	 */
 	public static function add_admin_class( $classes ) {
 		$classes .= ' frm-white-body ';
@@ -62,7 +66,7 @@ class FrmChal_Admin_Controller {
 
 		$frmchal_list = new FrmChal_List_Helper();
 
-		require(FrmChal_App_Helper::plugin_path() . '/classes/views/frmchal-page-settings.php');
+		require FrmChal_App_Helper::plugin_path() . '/classes/views/frmchal-page-settings.php';
 	}
 
 	/**
@@ -72,9 +76,11 @@ class FrmChal_Admin_Controller {
 	 * @return void
 	 */
 	public function enqueue_styles() {
-		wp_register_style( 'frmchal_style', FrmChal_App_Helper::plugin_url() . '/css/frmchal-admin.css');
-		if ($_REQUEST['page'] == FrmChal_App_Helper::$plugin_name) {
-			wp_enqueue_style('frmchal_style');
+		wp_register_style( 'frmchal_style', FrmChal_App_Helper::plugin_url() . '/css/frmchal-admin.css' );
+		if ( isset( $_REQUEST['page'] ) ) { // input var okay.
+			if ( FrmChal_App_Helper::$plugin_name === $_REQUEST['page'] ) { // input var okay.
+				wp_enqueue_style( 'frmchal_style' );
+			}
 		}
 	}
 
@@ -85,10 +91,13 @@ class FrmChal_Admin_Controller {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		wp_register_script( 'frmchal_script', FrmChal_App_Helper::plugin_url() .  '/js/frmchal-app.js', array('jquery' => 'jquery', ) );
-		wp_localize_script( 'frmchal_script', 'my_script', array( 'ajax_url'   => admin_url( 'admin-ajax.php' )) );
-		if ($_REQUEST['page'] == FrmChal_App_Helper::$plugin_name) {
-			wp_enqueue_script('frmchal_script');
+		wp_register_script( 'frmchal_script', FrmChal_App_Helper::plugin_url() . '/js/frmchal-app.js', array( 'jquery' => 'jquery' ) );
+		wp_localize_script( 'frmchal_script', 'my_script', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+
+		if ( isset( $_REQUEST['page'] ) ) { // input var okay.
+			if ( FrmChal_App_Helper::$plugin_name === $_REQUEST['page'] ) { // input var okay.
+				wp_enqueue_script( 'frmchal_script' );
+			}
 		}
 	}
 
