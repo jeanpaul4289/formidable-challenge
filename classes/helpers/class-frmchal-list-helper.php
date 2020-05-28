@@ -57,13 +57,18 @@ class FrmChal_List_Helper {
 	 */
 	public function prepare_items() {
 		$frmchal_data = get_option( 'frmchal_data' );
-		if ( $this->more_than_one_hour() || ! $frmchal_data ) {
-			$frmchal_data = $this->remote_response_handler( FrmChal_App_Helper::api_url() );
-			update_option( 'frmchal_data', $frmchal_data );
-			update_option( 'frmchal_date', FrmChal_App_Helper::current_date() );
+		try {
+			if ( $this->more_than_one_hour() || ! $frmchal_data ) {
+				$frmchal_data = $this->remote_response_handler( FrmChal_App_Helper::api_url() );
+				update_option( 'frmchal_data', $frmchal_data );
+				update_option( 'frmchal_date', FrmChal_App_Helper::current_date() );
+			}
+			$this->items     = json_decode( $frmchal_data );
+			$this->items_qty = $this->items ? count( (array) $this->items->data->rows ) : 0;
+		} catch ( Exception $e ) {
+			$this->items     = [];
+			$this->items_qty = 0;
 		}
-		$this->items     = json_decode( $frmchal_data );
-		$this->items_qty = $this->items ? count( (array) $this->items->data->rows ) : 0;
 	}
 
 	/**
@@ -232,7 +237,7 @@ class FrmChal_List_Helper {
 		?>
 		<div class="tablenav <?php echo esc_attr( $which ); ?>">
 			<div class="tablenav-pages one-page">
-				<span class="displaying-num"><?php echo wp_unslash( $this->items_qty ); ?> users</span>
+				<span class="displaying-num"><?php echo esc_html( $this->items_qty ); ?> users</span>
 			</div>
 			<?php if ( 'top' === $which ) { ?>
 			<div class="view-switch">
@@ -329,7 +334,7 @@ class FrmChal_List_Helper {
 		?>
 		<ul class="subsubsub">
 			<li class="published">
-				<a href="#" class="current">Users <span class="count">(<?php echo wp_unslash( $this->items_qty ); ?>)</span></a><br/>
+				<a href="#" class="current">Users <span class="count">(<?php echo esc_html( $this->items_qty ); ?>)</span></a><br/>
 			</li>
 		</ul>
 		<?php
