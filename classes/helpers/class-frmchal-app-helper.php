@@ -58,7 +58,7 @@ class FrmChal_App_Helper {
 	 * @access public
 	 * @return string The name of the plugin
 	 */
-	public static function plugin_name() {
+	public static function plugin_name() : string {
 		return self::$plugin_name;
 	}
 
@@ -69,7 +69,7 @@ class FrmChal_App_Helper {
 	 * @access public
 	 * @return string The version of this plugin
 	 */
-	public static function plugin_version() {
+	public static function plugin_version() : string {
 		return self::$version;
 	}
 
@@ -80,7 +80,7 @@ class FrmChal_App_Helper {
 	 * @access public
 	 * @return string The api url that will be consumed
 	 */
-	public static function api_url() {
+	public static function api_url() : string {
 		return self::$api_url;
 	}
 
@@ -91,7 +91,7 @@ class FrmChal_App_Helper {
 	 * @access public
 	 * @return string The plugin folder name
 	 */
-	public static function plugin_folder() {
+	public static function plugin_folder() : string {
 		return basename( self::plugin_path() );
 	}
 
@@ -102,7 +102,7 @@ class FrmChal_App_Helper {
 	 * @access public
 	 * @return string The plugin folder path
 	 */
-	public static function plugin_path() {
+	public static function plugin_path() : string {
 		return dirname( dirname( dirname( __FILE__ ) ) );
 	}
 
@@ -113,7 +113,7 @@ class FrmChal_App_Helper {
 	 * @access public
 	 * @return string URL within the plugin
 	 */
-	public static function plugin_url() {
+	public static function plugin_url() : string {
 		return plugins_url( '', self::plugin_path() . '/formidable.php' );
 	}
 
@@ -124,7 +124,7 @@ class FrmChal_App_Helper {
 	 * @access public
 	 * @return string current date
 	 */
-	public static function current_date() {
+	public static function current_date() : string {
 		return date( 'Y-m-d H:i:s' );
 	}
 

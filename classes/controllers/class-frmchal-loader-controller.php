@@ -109,7 +109,7 @@ class FrmChal_Loader_Controller {
 	 * @param int Optional $accepted_args The number of arguments that should be passed to the $callback.
 	 * @return type The collection of actions and filters registered with WordPress.
 	 */
-	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
+	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) : array {
 
 		$hooks[ $this->hook_index( $hook, $component, $callback ) ] = array(
 			'hook'          => $hook,
@@ -129,7 +129,7 @@ class FrmChal_Loader_Controller {
 	 * @since 1.0.0
 	 * @return object|\Formidable_Challenge_Loader
 	 */
-	public static function get_instance() {
+	public static function get_instance() : object {
 
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new Formidable_Challenge_Loader();
@@ -149,7 +149,7 @@ class FrmChal_Loader_Controller {
 	 *
 	 * @return string
 	 */
-	protected function hook_index( $hook, $component, $callback ) {
+	protected function hook_index( $hook, $component, $callback ) : string {
 
 		return md5( $hook . get_class( $component ) . $callback );
 

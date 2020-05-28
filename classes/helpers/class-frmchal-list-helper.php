@@ -77,7 +77,7 @@ class FrmChal_List_Helper {
 	 * @since 1.0.0
 	 * @return boolean
 	 */
-	public function more_than_one_hour() {
+	public function more_than_one_hour() : bool {
 		$frmchal_date    = get_option( 'frmchal_date' ) ? get_option( 'frmchal_date' ) : FrmChal_App_Helper::current_date();
 		$last_date       = strtotime( $frmchal_date );
 		$current_date    = strtotime( FrmChal_App_Helper::current_date() );
@@ -103,7 +103,7 @@ class FrmChal_List_Helper {
 	 * @param string $url endpoint url.
 	 * @return string $body response body.
 	 */
-	public function remote_response_handler( $url ) {
+	public function remote_response_handler( $url ) : string {
 
 		$response = wp_remote_request( $url );
 		$code     = wp_remote_retrieve_response_code( $response );
@@ -119,9 +119,10 @@ class FrmChal_List_Helper {
 	 * Display rows
 	 *
 	 * @since 1.0.0
+	 * @access private
 	 * @return void
 	 */
-	public function display_rows() {
+	private function display_rows() {
 		if ( $this->items && $this->items->data ) {
 			foreach ( $this->items->data->rows as $item ) {
 				echo esc_html( $this->single_row( $item ) );
@@ -134,10 +135,9 @@ class FrmChal_List_Helper {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 *
 	 * @return bool
 	 */
-	public function has_items() {
+	public function has_items() : bool {
 		return ! empty( $this->items );
 	}
 
@@ -145,9 +145,9 @@ class FrmChal_List_Helper {
 	 * Message to be displayed when there are no items
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access private
 	 */
-	public function no_items() {
+	private function no_items() {
 		esc_html_e( 'No users found.', 'formidable' );
 	}
 
@@ -156,10 +156,9 @@ class FrmChal_List_Helper {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 *
-	 * @return int
+	 * @return array
 	 */
-	public function get_column_headers() {
+	public function get_column_headers() : array {
 		return $this->items ? $this->items->data->headers : [];
 	}
 
@@ -167,11 +166,10 @@ class FrmChal_List_Helper {
 	 * Return number of columns
 	 *
 	 * @since 1.0.0
-	 * @access public
-	 *
+	 * @access private
 	 * @return int
 	 */
-	public function get_column_count() {
+	private function get_column_count() : int {
 		$columns = $this->get_column_headers();
 		return count( $columns );
 	}
@@ -180,9 +178,9 @@ class FrmChal_List_Helper {
 	 * Print column headers.
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access private
 	 */
-	public function print_column_headers() {
+	private function print_column_headers() {
 		$columns = $this->get_column_headers();
 		if ( $columns ) {
 			foreach ( $columns as $column_key => $column_display_name ) {
@@ -230,10 +228,10 @@ class FrmChal_List_Helper {
 	 * Generate the table navigation above or below the table
 	 *
 	 * @since 1.0.0
-	 * @access protected
+	 * @access private
 	 * @param string $which Whether is the top table navigation or the bottom table navigation.
 	 */
-	protected function display_tablenav( $which ) {
+	private function display_tablenav( $which ) {
 		?>
 		<div class="tablenav <?php echo esc_attr( $which ); ?>">
 			<div class="tablenav-pages one-page">
@@ -254,9 +252,9 @@ class FrmChal_List_Helper {
 	 * Generate the tbody element for the list table.
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access private
 	 */
-	public function display_rows_or_placeholder() {
+	private function display_rows_or_placeholder() {
 		if ( $this->has_items() ) {
 			$this->display_rows();
 		} else {
@@ -270,11 +268,10 @@ class FrmChal_List_Helper {
 	 * Generates content for a single row of the table
 	 *
 	 * @since 1.0.0
-	 * @access public
-	 *
+	 * @access private
 	 * @param object $item The current item.
 	 */
-	public function single_row( $item ) {
+	private function single_row( $item ) {
 		echo '<tr>';
 		$this->single_row_columns( $item );
 		echo '</tr>';
@@ -284,11 +281,10 @@ class FrmChal_List_Helper {
 	 * Generates the columns for a single row of the table
 	 *
 	 * @since 1.0.0
-	 * @access protected
-	 *
+	 * @access private
 	 * @param object $item The current item.
 	 */
-	protected function single_row_columns( $item ) {
+	private function single_row_columns( $item ) {
 		$columns = $this->get_column_headers();
 		foreach ( $item as $key => $value ) {
 			echo "<td $attributes>"; // WPCS: XSS ok.
@@ -371,8 +367,9 @@ class FrmChal_List_Helper {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @return string
 	 */
-	public function get_table_shortcode() {
+	public function get_table_shortcode() : string {
 		wp_enqueue_style( 'frmchal_style' );
 		wp_enqueue_script( 'frmchal_script' );
 

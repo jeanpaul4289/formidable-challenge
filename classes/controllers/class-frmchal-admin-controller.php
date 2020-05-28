@@ -50,7 +50,7 @@ class FrmChal_Admin_Controller {
 	 * @param string $classes Current css classes the admin body is using.
 	 * @return string
 	 */
-	public static function add_admin_class( $classes ) {
+	public static function add_admin_class( $classes ) : string {
 		$classes .= ' frm-white-body ';
 		return $classes;
 	}

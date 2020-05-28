@@ -173,7 +173,7 @@ class FrmChal_Controller {
 	 * @access private
 	 * @return boolean
 	 */
-	private function is_cli_running() {
+	private function is_cli_running() : bool {
 		return defined( 'WP_CLI' ) && WP_CLI;
 	}
 }
