@@ -21,15 +21,6 @@
 class FrmChal_Admin_Controller {
 
 	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since 1.0.0
-	 * @param none
-	 */
-	public function __construct() {
-	}
-
-	/**
 	 * Adds a settings page link to a menu
 	 *
 	 * @since 1.0.0
@@ -95,7 +86,7 @@ class FrmChal_Admin_Controller {
 	 */
 	public function enqueue_scripts() {
 		wp_register_script( 'frmchal_script', FrmChal_App_Helper::plugin_url() .  '/js/frmchal-app.js', array('jquery' => 'jquery', ) );
-		wp_localize_script( 'frmchal_script', 'my_script_object', array( 'ajax_url'   => admin_url( 'admin-ajax.php' )) );
+		wp_localize_script( 'frmchal_script', 'my_script', array( 'ajax_url'   => admin_url( 'admin-ajax.php' )) );
 		if ($_REQUEST['page'] == FrmChal_App_Helper::$plugin_name) {
 			wp_enqueue_script('frmchal_script');
 		}

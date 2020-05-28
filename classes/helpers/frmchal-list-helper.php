@@ -50,6 +50,31 @@ class FrmChal_List_Helper {
 	}
 
 	/**
+	 * Returns whether the data has been requested in more than one hour or not.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function more_than_one_hour() {
+		$frmchal_date    = get_option('frmchal_date') ? get_option('frmchal_date') : FrmChal_App_Helper::current_date();
+		$last_date       = strtotime($frmchal_date);
+		$current_date    = strtotime(FrmChal_App_Helper::current_date());
+		$time_difference = abs($current_date - $last_date)/(60*60);
+		return $time_difference > 1;
+	}
+
+	/**
+	 * Deletes the data in the database, in order to retreived from the API instead of the database.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function refresh() {
+		delete_option('frmchal_data');
+		delete_option('frmchal_date');
+	} 
+
+	/**
 	 * Remote response handler for the API endpoint
 	 *
 	 * @since 1.0.0
@@ -67,20 +92,6 @@ class FrmChal_List_Helper {
 		return $body;
 
 	}
-
-	/**
-	 * Returns whether the data has been requested in more than one hour or not.
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function more_than_one_hour() {
-		$frmchal_date    = get_option('frmchal_date') ? get_option('frmchal_date') : FrmChal_App_Helper::current_date();
-		$last_date       = strtotime($frmchal_date);
-		$current_date    = strtotime(FrmChal_App_Helper::current_date());
-		$time_difference = abs($current_date - $last_date)/(60*60);
-		return $time_difference > 1;
-	} 
 
 	/**
 	 * Display rows
@@ -310,7 +321,11 @@ class FrmChal_List_Helper {
 	 * @access public
 	 */
 	public function get_table() {
-		$this->prepare_items();
+		$refresh = $_POST['refresh'] == "true" ? true : false;
+		if ($refresh) {
+			$this->refresh();
+		}
+		$this->prepare_items($refresh);
 		ob_start();
 		
 		$this->display();

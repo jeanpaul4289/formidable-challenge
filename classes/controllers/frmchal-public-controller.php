@@ -21,24 +21,6 @@
 class FrmChal_Public_Controller {
 
 	/**
-	 * The plugin options.
-	 *
-	 * @since 1.0.0
-	 * @access private
-	 * @var string $options The plugin options.
-	 */
-	private $options;
-
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since 1.0.0
-	 * @param none
-	 */
-	public function __construct() {
-	}
-
-	/**
 	 * Register the stylesheets for the plugin in the admin side of the site.
 	 *
 	 * @since 1.0.0
@@ -46,7 +28,6 @@ class FrmChal_Public_Controller {
 	 */
 	public function enqueue_styles() {
 		wp_register_style( 'frmchal_style', FrmChal_App_Helper::plugin_url() . '/css/frmchal-public.css');
-		wp_enqueue_style('frmchal_style');
 	}
 
 	/**
@@ -57,8 +38,7 @@ class FrmChal_Public_Controller {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( 'frmchal_script', FrmChal_App_Helper::plugin_url() .  '/js/frmchal-app.js', array('jquery' => 'jquery', ) );
-		wp_localize_script( 'frmchal_script', 'my_script_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' )) );
-			wp_enqueue_script('frmchal_script');
+		wp_localize_script( 'frmchal_script', 'my_script', array( 'ajax_url' => admin_url( 'admin-ajax.php' )) );
 	}
 
 }

@@ -15,7 +15,7 @@
 /**
  * The core plugin class.
  *
- * This is used to define dashboard-specific hooks, and public-facing site hooks.
+ * This is used to define dashboard-specific hooks, public-facing site hooks, load the WP_CLI custom command .
  *
  * @since 1.0.0
  * @package Formidable_Challenge
@@ -102,6 +102,13 @@ class FrmChal_Controller {
 		 */
 		require_once FrmChal_App_Helper::plugin_path() . '/classes/controllers/frmchal-public-controller.php';
 
+		/**
+		* The class responsible for the WP CLI commands.
+		*/
+		if ( $this->is_cli_running() ) {
+			require_once FrmChal_App_Helper::plugin_path() . '/classes/commands/frmchal-cli-command.php';
+		}
+
 		$this->loader = new FrmChal_Loader_Controller();
 
 	}
@@ -149,9 +156,21 @@ class FrmChal_Controller {
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
 	 * @since 1.0.0
+	 * @access public 
 	 * @return void
 	 */
 	public function run() {
 		$this->loader->run();
+	}
+
+	/**
+	 * Check if WP_CLI is working.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @return boolean
+	 */
+	private function is_cli_running() {
+		return defined( 'WP_CLI' ) && WP_CLI;
 	}
 }
