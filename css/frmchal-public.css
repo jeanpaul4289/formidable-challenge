@@ -86,8 +86,7 @@ table.widefat td {
 
 .frm-header-logo,
 .edit-php.post-type-frm_display .frm-header-logo {
-	float: left;
-	margin: 0 15px 0 0;
+	display: none;
 }
 
 .frm_wrap #frm_top_bar h1 {
@@ -109,6 +108,9 @@ table.widefat td {
 	width: 225px;
 	min-height: 10px;
 }
+h1 span {
+	display: none;
+}
 
 h1 .frm-button-primary {
 	border-color: var(--primary-color);
@@ -118,7 +120,7 @@ h1 .frm-button-primary {
 	font-weight: normal;
 	height: auto !important;
 	line-height: 26px;
-	margin: 0 5px !important;
+	margin: 0 !important;
 	min-height: 28px;
 	outline: none;
 	padding: 0 15px;

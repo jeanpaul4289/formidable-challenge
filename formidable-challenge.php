@@ -13,8 +13,8 @@
  *
  * @wordpress-plugin
  * Plugin Name: Formidable Challenge
- * Plugin URI: https://github.com/jeanpaul4289/plugins/formidable-challenge/
- * Description: WordPress Plugin that shows a custom html table in the Dashboard Admin Panel.
+ * Plugin URI: https://github.com/jeanpaul4289/formidable-challenge/
+ * Description: Displays data from an accessible endpoint in the style of Formidable Forms plugin.
  * Version: 1.0.0
  * Author: Jean Paul Demorizi
  * Author URI: https://github.com/jeanpaul4289/
@@ -34,7 +34,7 @@ if ( ! defined( 'FORMIDABLE_CHALLENGE_FILE' ) ) {
 }
 
 /**
- * The core plugin class that is used to define admin-facing site hooks.
+ * The core plugin class that is used to define admin-facing and public-facing site hooks.
  *
  * @since 1.0.0
  */

@@ -152,6 +152,7 @@ class FrmChal_Controller {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'wp_ajax_get_table', $plugin_list, 'get_table' );
+		$this->loader->add_action( 'wp_ajax_nopriv_get_table', $plugin_list, 'get_table' );
 		add_shortcode( 'formidable_challenge', [ $plugin_list, 'get_table_shortcode' ] );
 	}
 

@@ -311,7 +311,7 @@ class FrmChal_List_Helper {
 			</a>
 			<div class="frm_top_left frm_top_wide">
 				<h1>
-					Formidable Challenge						
+					<span>Formidable Challenge</span>
 					<a id="refresh" ref="#" class="button button-primary frm-button-primary">Refresh</a>
 				</h1>
 			</div>
@@ -370,6 +370,7 @@ class FrmChal_List_Helper {
 	 * @return string
 	 */
 	public function get_table_shortcode() : string {
+		wp_enqueue_style( 'dashicons' );
 		wp_enqueue_style( 'frmchal_style' );
 		wp_enqueue_script( 'frmchal_script' );
 
